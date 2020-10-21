@@ -27,7 +27,7 @@ struct ContentView: View {
         }.frame(width: 100, height: 100, alignment: .center)
         .foregroundColor(.black)
         .background(Color.red)
-        .clipShape(/*@START_MENU_TOKEN@*/Circle()/*@END_MENU_TOKEN@*/)
+        .clipShape(Circle())
       }.onAppear(perform: createEngine)
     }
 }
