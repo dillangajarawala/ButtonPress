@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreHaptics
 
 @main
 struct ButtonPressApp: App {
