@@ -8,74 +8,54 @@
 import SwiftUI
 import CoreHaptics
 
-var engine: CHHapticEngine!
-var supportsHaptics: Bool = false
-let hapticDict = [
-    CHHapticPattern.Key.pattern: [
-        [CHHapticPattern.Key.event: [CHHapticPattern.Key.eventType: CHHapticEvent.EventType.hapticTransient,
-              CHHapticPattern.Key.time: 0.001,
-              CHHapticPattern.Key.eventDuration: 1.0] // End of first event
-        ] // End of first dictionary entry in the array
-    ] // End of array
-] // End of haptic dictionary
+//var engine: CHHapticEngine!
+//var supportsHaptics: Bool = false
 
 struct ContentView: View {
+  @State private var hapticManager: HapticManager?
+  @State private var sendHaptics: Bool = false
+  private var queue = DispatchQueue(label: "testqueue", attributes: .concurrent)
     var body: some View {
       VStack {
-        Button(action: buttonPressed) {
-          Text("Press Me!")
-        }.frame(width: 100, height: 100, alignment: .center)
+        Spacer()
+        Button(action: startPressed) {
+          Text("Start Haptics!")
+        }.frame(width: 300, height: 300, alignment: .center)
+        .foregroundColor(.black)
+        .background(Color.green)
+        .clipShape(Circle())
+        Spacer()
+        Button(action: stopPressed) {
+          Text("Stop Haptics!")
+        }.frame(width: 300, height: 300, alignment: .center)
         .foregroundColor(.black)
         .background(Color.red)
         .clipShape(Circle())
-      }.onAppear(perform: createEngine)
+        Spacer()
+      }.onAppear(perform: createHapticManager)
     }
-}
-
-func buttonPressed() {
-  if supportsHaptics {
-    let pattern: CHHapticPattern!
-    let player: CHHapticPatternPlayer
-    // creates haptic pattern from global dictionary
-    do {
-      pattern = try CHHapticPattern(dictionary: hapticDict)
-    } catch let error {
-      fatalError("Pattern Creation Error: \(error)")
+  
+  func startPressed() {
+    sendHaptics = true
+    while sendHaptics == true {
+      queue.async {
+        hapticManager?.playPattern()
+        sleep(1)
+      }
     }
-    // creates haptic player for the pattern
-    do {
-      player = try engine.makePlayer(with: pattern)
-    } catch let error {
-      fatalError("Player Creation Error: \(error)")
+  }
+  
+  func stopPressed() {
+    queue.async {
+      sendHaptics = false
     }
-    // plays the actual pattern
-    engine.start(completionHandler:nil)
-    do {
-      try player.start(atTime: 0)
-    } catch let error {
-      fatalError("Pattern Play Error: \(error)")
-    }
-    engine.stop(completionHandler: nil)
-  } else {
-    print("button was pressed!")
+  }
+  
+  func createHapticManager() {
+    hapticManager = HapticManager()
   }
 }
 
-func createEngine() {
-  // Check if the device supports haptics.
-  let hapticCapability = CHHapticEngine.capabilitiesForHardware()
-  supportsHaptics = hapticCapability.supportsHaptics
-  // Create and configure a haptic engine.
-  if supportsHaptics {
-    do {
-        engine = try CHHapticEngine()
-    } catch let error {
-        fatalError("Engine Creation Error: \(error)")
-    }
-  } else {
-    print("Doesn't support core haptics")
-  }
-}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
