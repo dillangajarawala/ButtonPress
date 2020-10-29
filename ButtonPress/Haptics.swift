@@ -51,7 +51,7 @@ extension HapticManager {
             CHHapticEventParameter(parameterID: .hapticIntensity, value: 3.0),
             CHHapticEventParameter(parameterID: .hapticSharpness, value: 3.0)
           ],
-          relativeTime: 0.01)
+          relativeTime: 1)
 
         return try CHHapticPattern(events: [pattern], parameters: [])
   }

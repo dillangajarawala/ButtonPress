@@ -40,7 +40,6 @@ struct ContentView: View {
     while sendHaptics == true {
       queue.async {
         hapticManager?.playPattern()
-        sleep(1)
       }
     }
   }
