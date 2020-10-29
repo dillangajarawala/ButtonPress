@@ -10,18 +10,14 @@ import Foundation
 import CoreHaptics
 
 class HapticManager {
-  // 1
   let hapticEngine: CHHapticEngine
 
-  // 2
   init?() {
-    // 3
     let hapticCapability = CHHapticEngine.capabilitiesForHardware()
     guard hapticCapability.supportsHaptics else {
       return nil
     }
 
-    // 4
     do {
       hapticEngine = try CHHapticEngine()
       hapticEngine.isAutoShutdownEnabled = true
@@ -33,20 +29,15 @@ class HapticManager {
   
   func playPattern() {
     do {
-      // 1
       let pattern = try basicPattern()
-      // 2
       try hapticEngine.start()
-      // 3
       let player = try hapticEngine.makePlayer(with: pattern)
-      // 4
       try player.start(atTime: CHHapticTimeImmediate)
-      // 5
       hapticEngine.notifyWhenPlayersFinished { _ in
         return .stopEngine
       }
     } catch {
-      print("Failed to play slice: \(error)")
+      print("Failed to play pattern: \(error)")
     }
   }
 }
